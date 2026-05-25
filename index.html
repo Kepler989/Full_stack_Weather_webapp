@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: black;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        h2 { margin-top: 0; color: #2d3436; }
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #dfe6e9;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+        }
+        input:focus { border-color: #74b9ff; }
+        button {
+            padding: 10px 20px;
+            background: #74b9ff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover { background: #0984e3; }
+        .weather-info {
+            display: none;
+            text-align: left;
+            background: #f5f6fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .weather-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            border-bottom: 1px solid #dcdde1;
+            padding-bottom: 5px;
+        }
+        .weather-item:last-child { border: none; }
+        .error { color: #d63031; margin-top: 15px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Live Weather Look-up</h2>
+        <div class="search-box">
+            <input type="text" id="cityInput" placeholder="Enter city name... (e.g. Delhi)">
+            <button onclick="getWeather()">Search</button>
+        </div>
+
+        <div id="errorBox" class="error"></div>
+
+        <div id="weatherBox" class="weather-info">
+            <h3 id="cityName" style="margin-top: 0; color: #0984e3;"></h3>
+            <div class="weather-item"><span>Temperature:</span> <strong id="temp"></strong></div>
+            <div class="weather-item"><span>Feels Like:</span> <strong id="feelsLike"></strong></div>
+            <div class="weather-item"><span>Condition:</span> <strong id="condition"></strong></div>
+            <div class="weather-item"><span>Humidity:</span> <strong id="humidity"></strong></div>
+            <div class="weather-item"><span>Wind Speed:</span> <strong id="wind"></strong></div>
+        </div>
+    </div>
+
+    <script>
+        async function getWeather() {
+            const city = document.getElementById('cityInput').value;
+            const weatherBox = document.getElementById('weatherBox');
+            const errorBox = document.getElementById('errorBox');
+
+            // Clear previous states
+            weatherBox.style.display = 'none';
+            errorBox.innerText = '';
+
+            if (!city) {
+                errorBox.innerText = 'Please type a city name first!';
+                return;
+            }
+
+            try {
+                // 🔄 Connects directly to YOUR Node.js backend API
+                const response = await fetch(`http://localhost:3000/api/weather?city=${city}`);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Something went wrong');
+                }
+
+                // 🗺️ Map the clean JSON fields from your backend to the HTML elements
+                document.getElementById('cityName').innerText = `${data.city}, ${data.country}`;
+                document.getElementById('temp').innerText = data.temperature;
+                document.getElementById('feelsLike').innerText = data.feelsLike;
+                document.getElementById('condition').innerText = data.condition;
+                document.getElementById('humidity').innerText = data.humidity;
+                document.getElementById('wind').innerText = data.windSpeed;
+
+                // Show the card layout
+                weatherBox.style.display = 'block';
+
+            } catch (err) {
+                errorBox.innerText = err.message;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,13 +1,17 @@
 import express from "express";
 import axios from "axios";
 import dotenv from "dotenv";
+import cors from "cors";
 
 dotenv.config();
+
 const app=express();
 const PORT=process.env.PORT || 3000;
 const API_KEY=process.env.OPENWEATHER_API_KEY;
 
+
 app.use(express.json());
+app.use(cors());
 
 app.get("/api/weather",async(req,res)=>{
     const {city}=req.query;
