@@ -105,7 +105,7 @@
             }
 
             try {
-                // 🔄 Connects directly to YOUR Node.js backend API
+
                 const response = await fetch(`http://localhost:3000/api/weather?city=${city}`);
                 const data = await response.json();
 
@@ -113,7 +113,7 @@
                     throw new Error(data.error || 'Something went wrong');
                 }
 
-                // 🗺️ Map the clean JSON fields from your backend to the HTML elements
+
                 document.getElementById('cityName').innerText = `${data.city}, ${data.country}`;
                 document.getElementById('temp').innerText = data.temperature;
                 document.getElementById('feelsLike').innerText = data.feelsLike;
@@ -121,7 +121,6 @@
                 document.getElementById('humidity').innerText = data.humidity;
                 document.getElementById('wind').innerText = data.windSpeed;
 
-                // Show the card layout
                 weatherBox.style.display = 'block';
 
             } catch (err) {
